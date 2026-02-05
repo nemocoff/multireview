@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaSearch, FaTimes, FaPlay, FaUser, FaStar, FaRegStar } from 'react-icons/fa';
+import { FaSearch, FaTimes, FaPlay, FaUser, FaStar, FaRegStar, FaTrash } from 'react-icons/fa';
 import './index.css';
 
 function App() {
@@ -123,6 +123,12 @@ function App() {
     }
   };
 
+  const removeAllVideos = () => {
+    if (urls.length > 0 && window.confirm('현재 시청 중인 모든 영상을 제거하시겠습니까?')) {
+        setUrls([]);
+    }
+  };
+
   return (
     <div className="app-container">
       {/* Floating Toggle Button */}
@@ -144,6 +150,9 @@ function App() {
                 <FaSearch /> 방송인 검색
             </button>
 
+            <button className="sidebar-action-btn" onClick={removeAllVideos}>
+                <FaTrash /> 전체 제거
+            </button>
             
             <div className="sidebar-favorites-section">
                 <span className="sidebar-label">즐겨찾기</span>
