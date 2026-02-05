@@ -28,22 +28,22 @@
 
 2.  **영상 추가하기**:
 
-<img width="896" height="679" alt="Image" src="https://github.com/user-attachments/assets/543fc22d-9c8c-46bf-bc38-464fe90c57b7" />
+<img width="896" height="679" alt="Image" src="https://github.com/user-attachments/assets/543fc22d-9c8c-46bf-bc38-464fe90c57b7"/>
 
-    *   **방송인 검색**: 메뉴에서 `방송인 검색`을 클릭하고 닉네임을 입력합니다. 원하는 영상을 클릭하면 멀티뷰 화면에 추가됩니다.
-    *   **즐겨찾기**: 검색 결과의 **별표(★)**를 눌러 즐겨찾기에 등록하면, 사이드바에서 채널을 빠르게 찾을 수 있습니다.
-    *   **URL 복사/붙여넣기**: 치지직 영상 링크를 복사하여 메뉴 하단의 입력창에 붙여넣고 `추가` 버튼을 누릅니다.
+*   **방송인 검색**: 메뉴에서 `방송인 검색`을 클릭하고 닉네임을 입력합니다. 원하는 영상을 클릭하면 멀티뷰 화면에 추가됩니다.
+*   **즐겨찾기**: 검색 결과의 **별표(★)**를 눌러 즐겨찾기에 등록하면, 사이드바에서 채널을 빠르게 찾을 수 있습니다.
+*   **URL 복사/붙여넣기**: 치지직 영상 링크를 복사하여 메뉴 하단의 입력창에 붙여넣고 `추가` 버튼을 누릅니다.
 
 3.  **영상 관리**:
-    *   **개별 제거**: 영상 위에 마우스를 올리면 좌측 상단에 **닫기(X) 버튼**이 나타납니다.
-    *   **전체 제거**: 사이드바 메뉴의 `전체 제거` 버튼을 눌러 모든 영상을 한 번에 비울 수 있습니다.
-    *   **자동 레이아웃**: 영상 개수에 따라 **자동으로 화면을 꽉 채우도록(1분할, 2분할, 4분할 등)** 배치됩니다.
+*   **개별 제거**: 영상 위에 마우스를 올리면 좌측 상단에 **닫기(X) 버튼**이 나타납니다.
+*   **전체 제거**: 사이드바 메뉴의 `전체 제거` 버튼을 눌러 모든 영상을 한 번에 비울 수 있습니다.
+*   **자동 레이아웃**: 영상 개수에 따라 **자동으로 화면을 꽉 채우도록(1분할, 2분할, 4분할 등)** 배치됩니다.
 
 ## 🛠 기술 스택 (Tech Stack)
 
 *   **Frontend**: React (Vite), Pure CSS (Glassmorphism Design)
 *   **Backend**: Node.js (Express) - Chzzk API Proxy Server
-*   **Deployment**: Firebase deploy
+*   **Deployment**: Firebase Hosting & Cloud Functions
 
 ## 🚀 설치 및 실행 방법 (Getting Started)
 
@@ -70,6 +70,33 @@ npm install
 npm run dev
 ```
 *   클라이언트는 `http://localhost:5173` (Vite 기본 포트)에서 실행됩니다.
+
+## 🌐 배포 (Deployment)
+
+이 프로젝트는 **Firebase Hosting** (Frontend) 및 **Cloud Functions** (Backend)를 사용하여 배포하도록 설정되어 있습니다.
+
+### Firebase 배포 방법
+
+1.  **Firebase CLI 설치 및 로그인**
+    ```bash
+    npm install -g firebase-tools
+    firebase login
+    ```
+
+2.  **빌드 및 배포**
+    ```bash
+    # 1. 클라이언트 빌드
+    cd client
+    npm run build
+
+    # 2. 서버 패키지 설치 (최초 1회)
+    cd ../functions
+    npm install
+
+    # 3. 전체 배포 (루트 폴더에서)
+    cd ..
+    firebase deploy
+    ```
 
 ## 📝 환경 변수 (Environment Variables)
 
