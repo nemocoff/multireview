@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { FaSearch, FaTimes, FaPlay, FaUser, FaStar, FaRegStar, FaTrash } from 'react-icons/fa';
+import { FaSearch, FaTimes, FaPlay, FaUser, FaStar, FaRegStar, FaTrash, FaPause, FaVolumeMute, FaVolumeUp, FaRedo, FaFastBackward, FaFastForward, FaBackward, FaForward } from 'react-icons/fa';
 import './index.css';
 
 function App() {
   const [urls, setUrls] = useState(() => {
-      const saved = localStorage.getItem('chzzk-layout');
-      return saved ? JSON.parse(saved) : [];
+      try {
+        const saved = localStorage.getItem('chzzk-layout');
+        return saved ? JSON.parse(saved) : [];
+      } catch { return []; }
   });
   
   useEffect(() => {
@@ -13,6 +15,7 @@ function App() {
   }, [urls]);
 
   const [input, setInput] = useState('');
+  const [seekAmount, setSeekAmount] = useState(10); // Default seek time
   
   // Search & Modal States
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -129,6 +132,15 @@ function App() {
     }
   };
 
+  const sendCommand = (action, value = null, targetUrl = null) => {
+      // If targetUrl is provided, it helps target specific iframe
+      // If null, it broadcasts to all
+      window.postMessage({
+          type: "EXTENSION_COMMAND",
+          payload: { action, value, targetUrl }
+      }, "*");
+  };
+
   return (
     <div className="app-container">
       {/* Floating Toggle Button */}
@@ -146,6 +158,31 @@ function App() {
          </div>
          
          <div className="sidebar-content">
+            <div className="sidebar-control-panel">
+                <span className="sidebar-label">전체 제어 (확장프로그램 필요)</span>
+                <div className="control-buttons">
+                    <button onClick={() => sendCommand('PLAY')} title="전체 재생"><FaPlay /></button>
+                    <button onClick={() => sendCommand('PAUSE')} title="전체 일시정지"><FaPause /></button>
+                    <button onClick={() => sendCommand('MUTE')} title="전체 음소거"><FaVolumeMute /></button>
+                    <button onClick={() => sendCommand('UNMUTE')} title="음소거 해제"><FaVolumeUp /></button>
+                </div>
+                
+                <div className="seek-control-panel">
+                    <input 
+                        type="number" 
+                        value={seekAmount} 
+                        onChange={(e) => setSeekAmount(Number(e.target.value))}
+                        className="seek-input"
+                        min="1"
+                    />
+                    <span className="seek-label">초</span>
+                    <button className="seek-btn" onClick={() => sendCommand('SEEK', -seekAmount)} title="뒤로"><FaBackward /></button>
+                    <button className="seek-btn" onClick={() => sendCommand('SEEK', seekAmount)} title="앞으로"><FaForward /></button>
+                </div>
+            </div>
+
+            <div className="sidebar-divider"></div>
+
             <button className="sidebar-action-btn" onClick={() => { setIsSearchOpen(true); setIsMenuOpen(false); }}>
                 <FaSearch /> 방송인 검색
             </button>
@@ -201,10 +238,14 @@ function App() {
                 allowFullScreen
                 allow="autoplay; encrypted-media"
               ></iframe>
-             <button className="remove-btn" onClick={() => {
-                const newUrls = urls.filter((_, i) => i !== index);
-                setUrls(newUrls);
-             }}><FaTimes /></button>
+             <div className="frame-controls">
+                <button className="mini-seek-btn" onClick={() => sendCommand('SEEK', -1, url)} title="-1초 (싱크 맞춰요)">-1s</button>
+                <button className="mini-seek-btn" onClick={() => sendCommand('SEEK', 1, url)} title="+1초 (싱크 맞춰요)">+1s</button>
+                <button className="remove-btn" onClick={() => {
+                    const newUrls = urls.filter((_, i) => i !== index);
+                    setUrls(newUrls);
+                }}><FaTimes /></button>
+             </div>
           </div>
         ))}
       </div>
