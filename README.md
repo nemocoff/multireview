@@ -18,7 +18,7 @@
 
 ## 📖 사용 방법 (How to use)
 
-<img width="279" height="908" alt="Image" src="https://github.com/user-attachments/assets/6b8c4f83-747a-4bcf-b861-04726eca6d33" />
+<img width="54" height="56" alt="Image" src="https://github.com/user-attachments/assets/357e668f-791d-4fb3-afab-d50e61fa784f" />
 
 1.  **메뉴 열기**: 화면 좌측 상단 모서리에 마우스를 가져가면 **메뉴 버튼**이 나타납니다.
 
