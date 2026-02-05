@@ -54,7 +54,7 @@ function App() {
     
     setIsLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/search?keyword=${keyword}`);
+      const response = await fetch(`/api/search?keyword=${keyword}`);
       const data = await response.json();
       // data.content.data is array of { channel: {...} } objects
       // We map it to extract the inner channel object
@@ -71,7 +71,7 @@ function App() {
     setSelectedChannel(channel);
     setIsLoading(true);
     try {
-        const response = await fetch(`http://localhost:5000/api/channels/${channel.channelId}/videos`);
+        const response = await fetch(`/api/channels/${channel.channelId}/videos`);
         const data = await response.json();
         setChannelVideos(data.content?.data || []);
     } catch (error) {
