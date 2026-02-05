@@ -1,0 +1,768 @@
+:root {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: rgba(255, 255, 255, 0.92);
+  
+  /* Modern Palette */
+  --bg-dark: #0f0f11;
+  --bg-secondary: #1a1a1d;
+  --primary-color: #00ffa3; /* Vibrant Green */
+  --primary-hover: #00d486;
+  --accent-color: #7000ff;
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  
+  --glass-bg: rgba(20, 20, 25, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --modal-bg: rgba(25, 25, 30, 0.95);
+  
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--bg-dark);
+  background: radial-gradient(circle at 80% -20%, #1a2c25 0%, var(--bg-dark) 60%),
+              radial-gradient(circle at 10% 120%, #150f24 0%, var(--bg-dark) 60%);
+  background-attachment: fixed;
+  overflow: hidden; /* App handles scrolling */
+}
+
+#root {
+  width: 100%;
+  height: 100vh;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+/* --- Floating Toggle Button --- */
+/* --- Floating Toggle Button --- */
+.menu-toggle-btn {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    z-index: 1001;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(30, 30, 35, 0.8); /* Slightly more opaque for visibility when hiding */
+    border: 1px solid var(--glass-border);
+    color: var(--primary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.3rem;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    
+    /* Hidden/Inactive State */
+    transform: translateX(-75%);
+    opacity: 0.3;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Expand hit area to prevent flickering when button moves */
+.menu-toggle-btn::after {
+    content: '';
+    position: absolute;
+    top: -20px;
+    bottom: -20px;
+    left: -100px; /* Extend far left to catch mouse */
+    width: 200px; /* Wide enough to cover the slide distance */
+    background: transparent;
+    z-index: -1;
+}
+
+.menu-toggle-btn:hover {
+    transform: translateX(20px); /* Slide out to "left: 20px" position */
+    opacity: 1;
+    background: var(--primary-color);
+    color: #000;
+    box-shadow: 0 0 20px rgba(0, 255, 163, 0.4);
+    border-color: transparent;
+}
+
+.menu-toggle-btn.active {
+    left: 280px; 
+    transform: translateX(0) rotate(90deg); /* Reset translation, rotate */
+    background: transparent;
+    color: #fff;
+    border: none;
+    box-shadow: none;
+    opacity: 1;
+}
+
+/* --- Sidebar Menu --- */
+.sidebar-menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100%;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid var(--glass-border);
+    transform: translateX(-100%);
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    padding: 80px 24px 30px; 
+    box-sizing: border-box;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+}
+
+.sidebar-menu.open {
+    transform: translateX(0);
+}
+
+.sidebar-header {
+    margin-bottom: 3rem;
+    padding-left: 5px;
+}
+
+.logo-text {
+    font-size: 1.8rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff 0%, var(--primary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.sidebar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.sidebar-action-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 1rem;
+    justify-content: flex-start;
+    padding-left: 20px;
+    gap: 12px;
+    transition: all 0.2s ease;
+}
+
+.sidebar-action-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.sidebar-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    margin: 5px 0;
+}
+
+.sidebar-input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sidebar-input-section span {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-left: 5px;
+}
+
+input {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.3);
+  color: white;
+  width: 100%;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+  outline: none;
+  box-sizing: border-box; /* Prevent padding from increasing width */
+}
+
+input:focus {
+    border-color: var(--primary-color);
+}
+
+button {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.add-btn {
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--primary-color);
+  color: #000;
+  font-weight: 700;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.add-btn:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 0 15px rgba(0, 255, 163, 0.3);
+    transform: translateY(-1px);
+}
+
+/* --- Grid & Video Items --- */
+/* Main Grid - Fit to Screen */
+.grid-container {
+  flex: 1;
+  display: grid;
+  /* Columns/Rows handled dynamically via inline styles */
+  gap: 0;
+  padding: 0;
+  overflow: hidden; /* No scrolling */
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+
+.video-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border: none;
+  border-radius: 0;
+  overflow: hidden; /* Clips the slightly larger iframe */
+}
+
+.video-frame iframe {
+    /* Width increases to push vertical scrollbar out of view */
+    width: calc(100% + 20px);
+    /* Height must be 100% to preserve bottom controls */
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: none;
+    pointer-events: auto;
+}
+
+.video-frame:hover {
+    border-color: rgba(255,255,255,0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+}
+
+.remove-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px; /* Changed from right to left */
+  right: auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  backdrop-filter: blur(4px);
+}
+
+.remove-btn:hover {
+    background: #ff4757;
+    border-color: #ff4757;
+    transform: scale(1.1);
+}
+
+.video-frame:hover .remove-btn {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 80%;
+  color: var(--text-secondary);
+  grid-column: 1 / -1;
+  font-size: 1.2rem;
+  gap: 20px;
+  animation: fadeIn 0.8s ease;
+}
+
+.empty-state::before {
+    content: '📺';
+    font-size: 4rem;
+    opacity: 0.5;
+    margin-bottom: 10px;
+}
+
+/* --- Modals --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+
+/* Update Modal Width for Split View */
+.modal-content {
+    background: var(--modal-bg);
+    width: 900px; /* Increased from 700px */
+    height: 75vh;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    border: 1px solid var(--glass-border);
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+
+/* Modal Search Split Layout */
+.modal-body-split {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.modal-side-favs {
+    width: 240px;
+    background: rgba(0,0,0,0.2);
+    border-right: 1px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+.modal-search-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.modal-fav-title {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    text-transform: uppercase;
+}
+
+.fav-list-modal {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.fav-item-modal {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(255,255,255,0.03);
+}
+
+.fav-item-modal:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(3px);
+}
+
+.fav-item-modal img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.empty-fav-small {
+    font-size: 0.85rem;
+    color: #666;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.modal-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255,255,255,0.02);
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.close-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    padding: 8px;
+    font-size: 1.4rem;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.close-btn:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+.search-form {
+    padding: 1.5rem 2rem;
+    display: flex;
+    gap: 15px;
+    border-bottom: 1px solid var(--glass-border);
+    background: rgba(0,0,0,0.2);
+}
+
+.search-form input {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    font-size: 1rem;
+    padding: 14px;
+}
+
+.search-form input:focus {
+    background: rgba(0,0,0,0.5);
+    border-color: var(--primary-color);
+}
+
+.search-form button {
+    padding: 0 20px;
+    background: var(--primary-color);
+    color: #000;
+    border-radius: 10px;
+    font-weight: 700;
+    transition: transform 0.2s;
+}
+
+.search-form button:hover {
+    transform: scale(1.05);
+}
+
+/* Results List - Channel Search */
+.results-list {
+    flex: 1;
+    overflow-y: scroll; /* Force scrollbar */
+    padding: 1.5rem;
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+/* Video Grid - Video Selection */
+.video-grid {
+    /* ... (Grid styles kept separate) ... */
+    padding: 2rem;
+    gap: 15px;
+}
+
+.channel-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid transparent;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.2s;
+}
+
+.channel-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.channel-item img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.channel-name {
+    font-size: 1.15rem;
+    color: var(--text-primary);
+}
+
+/* Video Selector */
+.modal-sub-header {
+    padding: 1.2rem 2rem;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.back-btn {
+    background: rgba(255,255,255,0.1);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    border-radius: 20px;
+    transition: all 0.2s;
+}
+
+.back-btn:hover {
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+
+/* Video Selector - Flex Container for Header + Grid */
+.video-selector {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Fill modal content height */
+    overflow: hidden; /* Prevent container itself from scrolling */
+    min-height: 0; /* Flexbox fix */
+}
+
+/* Sub-header stays at top */
+.modal-sub-header {
+    flex: 0 0 auto; /* Don't shrink */
+}
+
+/* Grid Area - Scrolls independently */
+.video-grid {
+    flex: 1 1 auto; /* Grow and Shrink */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: min-content; /* Ensure rows respect content height */
+    gap: 15px;
+    padding: 1.5rem;
+    overflow-y: scroll; /* Always show scrollbar */
+    min-height: 0; /* Allow shrinking for scroll */
+}
+
+.video-item {
+    background: rgba(30, 30, 35, 0.5);
+    border-radius: 12px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    overflow: hidden;
+    position: relative;
+    display: block; /* Ensure standard block layout */
+}
+
+/* Fix thumbnail sizing with robust aspect ratio */
+.video-thumb {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    height: 0;
+    overflow: hidden;
+}
+
+.video-thumb img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.video-duration {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    font-size: 0.75rem;
+    padding: 2px 5px;
+    border-radius: 4px;
+    z-index: 5;
+    font-weight: 600;
+}
+
+.video-item:hover .video-thumb img {
+    transform: scale(1.05);
+}
+
+/* No change needed here, just confirming logic */
+/* Just adding a placeholder logic check? No. */
+/* I will use this block to make the added video card flash or something?
+   Maybe add a :active style to .video-item?
+*/
+.video-item:active {
+    transform: scale(0.95);
+    border-color: var(--primary-color);
+}
+
+/* Clean up removed styles */
+
+.video-title {
+    padding: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #eee;
+    line-height: 1.4;
+}
+
+.loading {
+    color: var(--primary-color);
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+}
+
+/* Favorites Styles */
+.sidebar-favorites-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1; /* allow growth */
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.sidebar-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 5px;
+}
+
+.fav-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-right: 5px; 
+}
+
+.fav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(255,255,255,0.02);
+}
+
+.fav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(3px);
+}
+
+.fav-item img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #333;
+}
+
+.empty-fav {
+    color: #666;
+    font-size: 0.9rem;
+    padding: 10px;
+    text-align: center;
+}
+
+/* Star Button in Search */
+.fav-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.3rem;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fav-btn:hover {
+    background: rgba(255, 215, 0, 0.1);
+    color: #ffd700;
+    transform: scale(1.1);
+}
+
+/* Custom Scrollbar for Fav List */
+.fav-list::-webkit-scrollbar {
+    width: 5px;
+}
+.fav-list::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 3px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
