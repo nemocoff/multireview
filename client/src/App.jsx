@@ -14,6 +14,19 @@ function App() {
       localStorage.setItem('chzzk-layout', JSON.stringify(urls));
   }, [urls]);
 
+  // Extension Status State
+  const [isExtensionInstalled, setIsExtensionInstalled] = useState(false);
+
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.data.type === "EXTENSION_LOADED") {
+        setIsExtensionInstalled(true);
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
+
   const [input, setInput] = useState('');
   const [seekAmount, setSeekAmount] = useState(10); // Default seek time
   
@@ -159,7 +172,24 @@ function App() {
          
          <div className="sidebar-content">
             <div className="sidebar-control-panel">
-                <span className="sidebar-label">전체 제어 (확장프로그램 필요)</span>
+                <div className="control-header">
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span className="sidebar-label">전체 제어</span>
+                        {!isExtensionInstalled && (
+                            <span className="req-text" style={{ marginTop: '2px' }}>(확장프로그램 필요)</span>
+                        )}
+                    </div>
+                    {!isExtensionInstalled && (
+                        <a 
+                            href="https://chromewebstore.google.com/detail/chzzk-multireview-helper/ppabccogokpknkokcmiocnlbmnedjnpk?authuser=0&hl=ko" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="install-link"
+                        >
+                            설치하기
+                        </a>
+                    )}
+                </div>
                 <div className="control-buttons">
                     <button onClick={() => sendCommand('PLAY')} title="전체 재생"><FaPlay /></button>
                     <button onClick={() => sendCommand('PAUSE')} title="전체 일시정지"><FaPause /></button>
@@ -223,7 +253,7 @@ function App() {
 
       <div className="grid-container" style={{
         gridTemplateColumns: `repeat(${urls.length <= 1 ? 1 : Math.ceil(Math.sqrt(urls.length))}, 1fr)`,
-        gridTemplateRows: `repeat(${urls.length === 0 ? 1 : Math.ceil(urls.length / (urls.length <= 1 ? 1 : Math.ceil(Math.sqrt(urls.length))))}, 1fr)`
+        gridTemplateRows: `repeat(${urls.length <= 1 ? 1 : Math.ceil(urls.length / Math.ceil(Math.sqrt(urls.length)))}, min-content)`
       }}>
         {urls.length === 0 && <div className="empty-state">영상을 추가하거나 채널을 검색하세요.</div>}
         {urls.map((url, index) => (
@@ -241,11 +271,11 @@ function App() {
              <div className="frame-controls">
                 <button className="mini-seek-btn" onClick={() => sendCommand('SEEK', -1, url)} title="-1초 (싱크 맞춰요)">-1s</button>
                 <button className="mini-seek-btn" onClick={() => sendCommand('SEEK', 1, url)} title="+1초 (싱크 맞춰요)">+1s</button>
-                <button className="remove-btn" onClick={() => {
-                    const newUrls = urls.filter((_, i) => i !== index);
-                    setUrls(newUrls);
-                }}><FaTimes /></button>
              </div>
+             <button className="remove-btn" onClick={() => {
+                 const newUrls = urls.filter((_, i) => i !== index);
+                 setUrls(newUrls);
+             }}><FaTimes /></button>
           </div>
         ))}
       </div>

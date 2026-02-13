@@ -1,27 +1,15 @@
 {
   "manifest_version": 3,
   "name": "Chzzk MultiReview Helper",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Enables simultaneous playback control for Chzzk MultiReview.",
-  "permissions": [
-    "scripting",
-    "tabs"
-  ],
-  "host_permissions": [
-    "*://chzzk.naver.com/*",
-    "*://*.chzzk.naver.com/*",
-    "http://localhost/*",
-    "https://multireview-e641f.web.app/*",
-    "https://multireview-e641f.firebaseapp.com/*"
-  ],
+  "permissions": [],
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
       "matches": [
-        "http://localhost:5173/*",
-        "http://localhost:5000/*",
         "https://multireview-e641f.web.app/*",
         "https://multireview-e641f.firebaseapp.com/*"
       ],

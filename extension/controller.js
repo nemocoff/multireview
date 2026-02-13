@@ -7,11 +7,20 @@ window.addEventListener("message", (event) => {
     if (event.source !== window) return;
 
     if (event.data.type === "EXTENSION_COMMAND") {
-        // Relay to Background Script
-        chrome.runtime.sendMessage({
-            target: "background",
-            command: event.data.payload
-        });
+        // Check if extension context is valid
+        if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+            try {
+                // Relay to Background Script
+                chrome.runtime.sendMessage({
+                    target: "background",
+                    command: event.data.payload
+                }).catch(() => {
+                    // Suppress error if background is unreachable
+                });
+            } catch (e) {
+                console.warn("Extension disconnected. Please refresh the page.");
+            }
+        }
     }
 });
 
